@@ -1,6 +1,6 @@
 #include "Camera.hpp"
 
-Camera::Camera(glm::vec3 position, float aspect_ratio) : m_forwards(glm::vec3(0.0f, 0.0f, -1.0f)), m_movementSpeed(5.0f), m_mouseSensitivity(0.1f), m_fov(40.0f), m_position(position), m_yaw(-90.0f), m_pitch(0.0f), m_worldUp(0.0f, 1.0f, 0.0f), m_up(0.0f, 1.0f, 0.0f), m_near(1.0f), m_far(10.0f), m_aspectRatio(aspect_ratio) {
+Camera::Camera(glm::vec3 position, float aspect_ratio) : m_forwards(glm::vec3(0.0f, 0.0f, -1.0f)), m_movementSpeed(3.0f), m_mouseSensitivity(0.1f), m_fov(40.0f), m_position(position), m_yaw(-90.0f), m_pitch(0.0f), m_worldUp(0.0f, 1.0f, 0.0f), m_up(0.0f, 1.0f, 0.0f), m_near(1.0f), m_far(10.0f), m_aspectRatio(aspect_ratio) {
     UpdateVectors();
 }
 

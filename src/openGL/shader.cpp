@@ -89,6 +89,12 @@ int Shader::GetUniformLocation(const std::string& name) {
     return location;
 }
 
+void Shader::SetLight(const Light& light) {
+    Bind();
+    SetVector3("u_lightColor", light.GetColor());
+    SetVector3("u_lightPos", light.GetPosition());
+}
+
 void Shader::SetFloat(const std::string& name, const float value) {
     GLCall(glUniform1f(GetUniformLocation(name), value));
 }

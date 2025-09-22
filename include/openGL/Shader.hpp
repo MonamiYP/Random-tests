@@ -6,6 +6,8 @@
 #include <unordered_map>
 #include <glm/glm.hpp>
 
+#include "Light.hpp"
+
 class Shader {
     private:
         unsigned int m_shaderProgramID;
@@ -25,6 +27,9 @@ class Shader {
         void CreateShaderProgram(const std::string& vertexShader, const std::string& fragmentShader);
 
         int GetUniformLocation(const std::string& name);
+
+        void SetLight(const Light& light);
+
         void SetFloat(const std::string& name, const float value);
         void SetInt(const std::string& name, const int value);
         void SetVector3(const std::string& name, const glm::vec3& vector);

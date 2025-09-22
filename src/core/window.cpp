@@ -31,7 +31,7 @@ GLFWwindow* Window::setupWindow() {
 void Window::setupCallbacks(GLFWwindow* window, Input* input) {
     glfwSetWindowUserPointer(window, input);
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
-    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
     glfwSetCursorPosCallback(window, [](GLFWwindow* window, double xpos, double ypos) {
         Input* input = static_cast<Input*>(glfwGetWindowUserPointer(window));
         if (input) input->mouseCallback((float)xpos, (float)ypos);
