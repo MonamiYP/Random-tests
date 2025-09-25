@@ -1,23 +1,22 @@
 #pragma once
 
 #include <GLFW/glfw3.h>
-#include "ApplicationState.hpp"
+#include "EngineConfig.hpp"
 #include "Camera.hpp"
 
 class Input {
     private:
-        Camera* m_camera;
-        static Input* s_instance;
+        Camera& m_camera;
 
         float m_lastX;
         float m_lastY;
         bool m_firstMouse;
 
     public:
-        Input(Camera* camera) : m_camera(camera), m_firstMouse(true) {};
-        void processInput(ApplicationState& state);
+        Input(Camera& camera) : m_camera(camera), m_firstMouse(true) {};
+        void processInput(GLFWwindow* window, float deltaTime);
         void mouseCallback(float xPos, float yPos);
         void scrollCallback(float yscroll);
 
-        void toggleImGUI(ApplicationState& state);
+        bool toggleImGUI(GLFWwindow* window);
 };

@@ -6,8 +6,9 @@ class ImGUI {
     private:
         
     public:
-        ImGUI(GLFWwindow* window);
+        ImGUI();
         ~ImGUI();
         
+        void setupImGUI(GLFWwindow* window);
         void drawGUI();
 };

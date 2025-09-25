@@ -3,16 +3,16 @@
 void Engine::Run() {
     Init();
 
-    while (!glfwWindowShouldClose(state.window)) {
+    while (!glfwWindowShouldClose(m_window.getWindow())) {
         float currentTime = glfwGetTime();
-        state.deltaTime = currentTime - state.lastTime;
-        state.lastTime = currentTime;
+        m_config.deltaTime = currentTime - m_config.lastTime;
+        m_config.lastTime = currentTime;
 
         Update();
         ProcessInput();
         Render();
 
-        glfwSwapBuffers(state.window);
+        glfwSwapBuffers(m_window.getWindow());
         glfwPollEvents();
     }
 
@@ -20,39 +20,47 @@ void Engine::Run() {
 }
 
 void Engine::Init() {
-    state.window = window.setupWindow();
-    if (!state.window) throw std::runtime_error("Failed to create window");
+    m_ecs.Init();
+    if (!m_window.setupWindow()) throw std::runtime_error("Failed to create window");
 
-    camera = new Camera(glm::vec3(0.0f, 0.0f, 3.0f));
-    input = new Input(camera);
-    window.setupCallbacks(state.window, input);
+    m_window.setupCallbacks(&m_input);
 
-    imGUI = new ImGUI(state.window);
+    m_imGUI.setupImGUI(m_window.getWindow());
 
-    std::string vertex_source = shader.ParseShader("../res/shaders/basic.vertex");
-    std::string fragment_source = shader.ParseShader("../res/shaders/basic.fragment");
-    shader.CreateShaderProgram(vertex_source, fragment_source);
+    std::string vertex_source = m_shader.ParseShader("../res/shaders/basic.vertex");
+    std::string fragment_source = m_shader.ParseShader("../res/shaders/basic.fragment");
+    m_shader.CreateShaderProgram(vertex_source, fragment_source);
 
-    light = Light(glm::vec3(1.0f, 1.0f, 5.0f), glm::vec3(1.0f, 0.8f, 0.8f));
-    shader.SetLight(light);
+    m_light = Light(glm::vec3(0.0f, 10.0f, 0.0f), glm::vec3(1.0f, 0.8f, 0.8f));
+    m_shader.SetLight(m_light);
 
-    carModel.LoadModel("../res/assets/car/car.obj");
+    m_carModel.LoadModel("../res/assets/car/car.obj");
 }
 
 void Engine::Update() {
-    shader.Bind();
-    shader.SetMatrix4("u_view", camera->GetCameraView());
-    shader.SetMatrix4("u_projection", camera->GetCameraProjection());
+    if (m_input.toggleImGUI(m_window.getWindow())) {
+        m_config.guiEnable = !m_config.guiEnable;
+        if (m_config.guiEnable) {
+             glfwSetInputMode(m_window.getWindow(), GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+        } else {
+             glfwSetInputMode(m_window.getWindow(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+        }  
+    }
+
+    m_shader.Bind();
+    m_shader.SetMatrix4("u_view", m_camera.GetCameraView());
+    m_shader.SetMatrix4("u_projection", m_camera.GetCameraProjection());
+    m_shader.SetVector3("u_viewPos", m_camera.GetPosition());
 }
 
 void Engine::ProcessInput() {
-    input->processInput(state);
+    m_input.processInput(m_window.getWindow(), m_config.deltaTime);
 }
 
 void Engine::Render() {
-    renderer.Clear();
+    m_renderer.Clear();
 
-    if(state.guiEnable) { imGUI->drawGUI(); };
+    if(m_config.guiEnable) { m_imGUI.drawGUI(); };
 
-    carModel.Draw(shader);
+    m_carModel.Draw(m_shader);
 }
