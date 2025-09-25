@@ -4,7 +4,7 @@
 #include <GLFW/glfw3.h>
 #include <iostream>
 
-#include "Input.hpp"
+#include "InputManager.hpp"
 
 class Window {
     private:
@@ -14,7 +14,7 @@ class Window {
 
     public:
         bool setupWindow();
-        void setupCallbacks(Input* input);
+        void setupCallbacks(InputManager* input);
         static void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 
         GLFWwindow* getWindow() { return m_window; }

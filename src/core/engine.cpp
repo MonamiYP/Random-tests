@@ -1,5 +1,7 @@
 #include "Engine.hpp"
 
+extern ECS ecs;
+
 void Engine::Run() {
     Init();
 
@@ -8,8 +10,8 @@ void Engine::Run() {
         m_config.deltaTime = currentTime - m_config.lastTime;
         m_config.lastTime = currentTime;
 
-        Update();
         ProcessInput();
+        Update();
         Render();
 
         glfwSwapBuffers(m_window.getWindow());
@@ -20,10 +22,10 @@ void Engine::Run() {
 }
 
 void Engine::Init() {
-    m_ecs.Init();
+    ecs.Init();
     if (!m_window.setupWindow()) throw std::runtime_error("Failed to create window");
 
-    m_window.setupCallbacks(&m_input);
+    m_window.setupCallbacks(&InputManager::Get());
 
     m_imGUI.setupImGUI(m_window.getWindow());
 
@@ -35,10 +37,17 @@ void Engine::Init() {
     m_shader.SetLight(m_light);
 
     m_carModel.LoadModel("../res/assets/car/car.obj");
+
+    RegisterComponents();
+    RegisterSystems();
+
+    m_camera = ecs.CreateEntity();
+    ecs.AddComponent(m_camera, Camera {});
+    ecs.AddComponent(m_camera, Transform {});
 }
 
 void Engine::Update() {
-    if (m_input.toggleImGUI(m_window.getWindow())) {
+    if (InputManager::Get().toggleImGUI(m_window.getWindow())) {
         m_config.guiEnable = !m_config.guiEnable;
         if (m_config.guiEnable) {
              glfwSetInputMode(m_window.getWindow(), GLFW_CURSOR, GLFW_CURSOR_NORMAL);
@@ -47,14 +56,20 @@ void Engine::Update() {
         }  
     }
 
+    m_cameraSystem->Update(m_config.deltaTime);
+    auto& camera_camera = ecs.GetComponent<Camera>(m_camera);
+    auto& camera_transform = ecs.GetComponent<Transform>(m_camera);
+
     m_shader.Bind();
-    m_shader.SetMatrix4("u_view", m_camera.GetCameraView());
-    m_shader.SetMatrix4("u_projection", m_camera.GetCameraProjection());
-    m_shader.SetVector3("u_viewPos", m_camera.GetPosition());
+    m_shader.SetMatrix4("u_view", camera_camera.viewMatrix);
+    m_shader.SetMatrix4("u_projection", camera_camera.projectionMatrix);
+    m_shader.SetVector3("u_viewPos", camera_transform.position);
+
+    InputManager::Get().resetMouse();
 }
 
 void Engine::ProcessInput() {
-    m_input.processInput(m_window.getWindow(), m_config.deltaTime);
+    InputManager::Get().processInput(m_window.getWindow(), m_config.deltaTime);
 }
 
 void Engine::Render() {
@@ -63,4 +78,19 @@ void Engine::Render() {
     if(m_config.guiEnable) { m_imGUI.drawGUI(); };
 
     m_carModel.Draw(m_shader);
+}
+
+void Engine::RegisterComponents() {
+    ecs.RegisterComponent<Transform>();
+    ecs.RegisterComponent<Camera>();
+}
+
+void Engine::RegisterSystems() {
+    m_cameraSystem = ecs.RegisterSystem<CameraSystem>();
+    {
+        Signature signature;
+        signature.set(ecs.GetComponentType<Transform>());
+        signature.set(ecs.GetComponentType<Camera>());
+        ecs.SetSystemSignature<CameraSystem>(signature);
+    }
 }

@@ -29,16 +29,16 @@ bool Window::setupWindow() {
     return true;
 }
 
-void Window::setupCallbacks(Input* input) {
+void Window::setupCallbacks(InputManager* input) {
     glfwSetWindowUserPointer(m_window, input);
     glfwSetFramebufferSizeCallback(m_window, framebuffer_size_callback);
     glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
     glfwSetCursorPosCallback(m_window, [](GLFWwindow* window, double xpos, double ypos) {
-        Input* input = static_cast<Input*>(glfwGetWindowUserPointer(window));
+        InputManager* input = static_cast<InputManager*>(glfwGetWindowUserPointer(window));
         if (input) input->mouseCallback((float)xpos, (float)ypos);
     });
     glfwSetScrollCallback(m_window, [](GLFWwindow* window, double xscroll, double yscroll) {
-        Input* input = static_cast<Input*>(glfwGetWindowUserPointer(window));
+        InputManager* input = static_cast<InputManager*>(glfwGetWindowUserPointer(window));
         if (input) input->scrollCallback((float)yscroll);
     });
 }

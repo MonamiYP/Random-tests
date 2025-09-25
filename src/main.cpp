@@ -1,5 +1,7 @@
 #include "Engine.hpp"
 
+ECS ecs;
+
 int main() {
     try {
         Engine engine;
