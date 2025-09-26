@@ -1,18 +1,6 @@
 #include "Shader.hpp"
 #include "Renderer.hpp"
 
-Shader::~Shader() {
-    GLCall(glDeleteProgram(m_shaderProgramID));
-}
-
-void Shader::Bind() const {
-    GLCall(glUseProgram(m_shaderProgramID));
-}
-
-void Shader::Unbind() const {
-    glUseProgram(0);
-}
-
 void Shader::CreateShaderProgram(const std::string& vertexShader, const std::string& fragmentShader) {
     unsigned int program = glCreateProgram();
     unsigned int vertex_shader = CompileShader(GL_VERTEX_SHADER, vertexShader);

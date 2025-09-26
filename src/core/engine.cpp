@@ -29,12 +29,12 @@ void Engine::Init() {
 
     m_imGUI.setupImGUI(m_window.getWindow());
 
-    std::string vertex_source = m_shader.ParseShader("../res/shaders/basic.vertex");
-    std::string fragment_source = m_shader.ParseShader("../res/shaders/basic.fragment");
-    m_shader.CreateShaderProgram(vertex_source, fragment_source);
+    ShaderManager::loadShader("default", "../res/shaders/basic.vertex", "../res/shaders/basic.fragment");
 
     m_light = Light(glm::vec3(0.0f, 10.0f, 0.0f), glm::vec3(1.0f, 0.8f, 0.8f));
-    m_shader.SetLight(m_light);
+    Shader* shader = ShaderManager::getShader("default");
+    shader->Bind();
+    shader->SetLight(m_light);
 
     m_carModel.LoadModel("../res/assets/car/car.obj");
 
@@ -60,10 +60,12 @@ void Engine::Update() {
     auto& camera_camera = ecs.GetComponent<Camera>(m_camera);
     auto& camera_transform = ecs.GetComponent<Transform>(m_camera);
 
-    m_shader.Bind();
-    m_shader.SetMatrix4("u_view", camera_camera.viewMatrix);
-    m_shader.SetMatrix4("u_projection", camera_camera.projectionMatrix);
-    m_shader.SetVector3("u_viewPos", camera_transform.position);
+    Shader* shader = ShaderManager::getShader("default");
+
+    shader->Bind();
+    shader->SetMatrix4("u_view", camera_camera.viewMatrix);
+    shader->SetMatrix4("u_projection", camera_camera.projectionMatrix);
+    shader->SetVector3("u_viewPos", camera_transform.position);
 
     InputManager::Get().resetMouse();
 }
@@ -77,7 +79,8 @@ void Engine::Render() {
 
     if(m_config.guiEnable) { m_imGUI.drawGUI(); };
 
-    m_carModel.Draw(m_shader);
+    Shader* shader = ShaderManager::getShader("default");
+    m_carModel.Draw(*shader);
 }
 
 void Engine::RegisterComponents() {

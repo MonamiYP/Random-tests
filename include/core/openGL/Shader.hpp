@@ -17,10 +17,10 @@ class Shader {
 
     public:
         Shader() {}
-        ~Shader();
+        ~Shader() { glDeleteProgram(m_shaderProgramID); }
 
-        void Bind() const;
-        void Unbind() const;
+        void Bind() const { glUseProgram(m_shaderProgramID); }
+        void Unbind() const { glUseProgram(0); }
 
         unsigned int CompileShader(unsigned int type, const std::string& source);
         std::string ParseShader(const std::string& filepath);

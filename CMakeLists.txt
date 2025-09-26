@@ -30,10 +30,10 @@ target_include_directories(${PROJECT_NAME}
     PRIVATE lib
     PRIVATE include
     PRIVATE include/core
+    PRIVATE include/core/openGL
     PRIVATE include/entities
     PRIVATE include/components
     PRIVATE include/systems
-    PRIVATE include/openGL
     PRIVATE include/primitives
 )
 

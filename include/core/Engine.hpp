@@ -10,6 +10,7 @@
 #include "Renderer.hpp"
 #include "Camera.hpp"
 #include "InputManager.hpp"
+#include "ShaderManager.hpp"
 #include "Model.hpp"
 #include "ImGUI.hpp"
 #include "ECS.hpp"
@@ -31,7 +32,6 @@ class Engine {
         Renderer m_renderer;
         ImGUI m_imGUI;
 
-        Shader m_shader;
         Light m_light;
         Model m_carModel;
 
