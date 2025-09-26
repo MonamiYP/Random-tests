@@ -5,5 +5,5 @@
 
 struct Material {
     std::string shaderName;
-    glm::vec3 color;
+    glm::vec3 color{1.0f};
 };

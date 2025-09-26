@@ -29,21 +29,16 @@ void Engine::Init() {
 
     m_imGUI.setupImGUI(m_window.getWindow());
 
-    ShaderManager::loadShader("default", "../res/shaders/basic.vertex", "../res/shaders/basic.fragment");
+    ResourceManager::loadShader("default", "../res/shaders/basic.vertex", "../res/shaders/basic.fragment");
 
     m_light = Light(glm::vec3(0.0f, 10.0f, 0.0f), glm::vec3(1.0f, 0.8f, 0.8f));
-    Shader* shader = ShaderManager::getShader("default");
+    Shader* shader = ResourceManager::getShader("default");
     shader->Bind();
     shader->SetLight(m_light);
 
-    m_carModel.LoadModel("../res/assets/car/car.obj");
-
     RegisterComponents();
     RegisterSystems();
-
-    m_camera = ecs.CreateEntity();
-    ecs.AddComponent(m_camera, Camera {});
-    ecs.AddComponent(m_camera, Transform {});
+    CreateEntities();
 }
 
 void Engine::Update() {
@@ -60,7 +55,7 @@ void Engine::Update() {
     auto& camera_camera = ecs.GetComponent<Camera>(m_camera);
     auto& camera_transform = ecs.GetComponent<Transform>(m_camera);
 
-    Shader* shader = ShaderManager::getShader("default");
+    Shader* shader = ResourceManager::getShader("default");
 
     shader->Bind();
     shader->SetMatrix4("u_view", camera_camera.viewMatrix);
@@ -75,17 +70,18 @@ void Engine::ProcessInput() {
 }
 
 void Engine::Render() {
-    m_renderer.Clear();
+    m_renderSystem->clear();
 
     if(m_config.guiEnable) { m_imGUI.drawGUI(); };
 
-    Shader* shader = ShaderManager::getShader("default");
-    m_carModel.Draw(*shader);
+    m_renderSystem->render();
 }
 
 void Engine::RegisterComponents() {
     ecs.RegisterComponent<Transform>();
     ecs.RegisterComponent<Camera>();
+    ecs.RegisterComponent<ModelComponent>();
+    ecs.RegisterComponent<Material>();
 }
 
 void Engine::RegisterSystems() {
@@ -96,4 +92,27 @@ void Engine::RegisterSystems() {
         signature.set(ecs.GetComponentType<Camera>());
         ecs.SetSystemSignature<CameraSystem>(signature);
     }
+
+    m_renderSystem = ecs.RegisterSystem<RenderSystem>();
+    {
+        Signature signature;
+        signature.set(ecs.GetComponentType<Transform>());
+        signature.set(ecs.GetComponentType<ModelComponent>());
+        signature.set(ecs.GetComponentType<Material>());
+        ecs.SetSystemSignature<RenderSystem>(signature);
+    }
+}
+
+void Engine::CreateEntities() {
+    /* Camera */
+    m_camera = ecs.CreateEntity();
+    ecs.AddComponent(m_camera, Camera {});
+    ecs.AddComponent(m_camera, Transform {});
+
+    /* Car */
+    ResourceManager::loadModel("car", "../res/assets/car/car.obj");
+    Entity car = ecs.CreateEntity();
+    ecs.AddComponent(car, Transform {});
+    ecs.AddComponent(car, ModelComponent { .model = ResourceManager::getModel("car") });
+    ecs.AddComponent(car, Material { .shaderName = "default" });
 }

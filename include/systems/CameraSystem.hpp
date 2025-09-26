@@ -1,6 +1,6 @@
 #pragma once
 
-#include "core/ECS.hpp"
+#include "ECS.hpp"
 #include "components/Camera.hpp"
 #include "components/Transform.hpp"
 

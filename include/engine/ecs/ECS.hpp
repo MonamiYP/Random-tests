@@ -1,10 +1,10 @@
 #pragma once
 
-#include "ecs/ComponentManager.hpp"
-#include "ecs/EntityManager.hpp"
-#include "ecs/SystemManager.hpp"
+#include "ComponentManager.hpp"
+#include "EntityManager.hpp"
+#include "SystemManager.hpp"
 // #include "EventManager.hpp"
-#include "ecs/Types.hpp"
+#include "Types.hpp"
 #include <memory>
 
 class ECS {

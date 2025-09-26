@@ -7,10 +7,9 @@
 
 #include "EngineConfig.hpp"
 #include "Window.hpp"
-#include "Renderer.hpp"
 #include "Camera.hpp"
 #include "InputManager.hpp"
-#include "ShaderManager.hpp"
+#include "ResourceManager.hpp"
 #include "Model.hpp"
 #include "ImGUI.hpp"
 #include "ECS.hpp"
@@ -18,6 +17,7 @@
 #include "Transform.hpp"
 #include "Camera.hpp"
 #include "CameraSystem.hpp"
+#include "RenderSystem.hpp"
 
 class Engine {    
     public:
@@ -29,11 +29,9 @@ class Engine {
     private:
         EngineConfig m_config;
         Window m_window;
-        Renderer m_renderer;
         ImGUI m_imGUI;
 
         Light m_light;
-        Model m_carModel;
 
         Entity m_camera;
 
@@ -47,4 +45,5 @@ class Engine {
         void CreateEntities();
 
         std::shared_ptr<CameraSystem> m_cameraSystem;
+        std::shared_ptr<RenderSystem> m_renderSystem;
 };

@@ -29,8 +29,9 @@ target_include_directories(${PROJECT_NAME}
     PUBLIC res
     PRIVATE lib
     PRIVATE include
-    PRIVATE include/core
-    PRIVATE include/core/openGL
+    PRIVATE include/engine/core
+    PRIVATE include/engine/ecs
+    PRIVATE include/engine/openGL
     PRIVATE include/entities
     PRIVATE include/components
     PRIVATE include/systems
