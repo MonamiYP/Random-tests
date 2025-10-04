@@ -17,6 +17,36 @@ void Shader::CreateShaderProgram(const std::string& vertexShader, const std::str
     m_shaderProgramID = program;
 }
 
+void Shader::CreateShaderProgram(const std::string& vertexShader, const std::string& tescShader, const std::string& teseShader, const std::string& fragmentShader) {
+    unsigned int program = glCreateProgram();
+    unsigned int vertex_shader = CompileShader(GL_VERTEX_SHADER, vertexShader);
+    unsigned int tesc_shader = CompileShader(GL_TESS_CONTROL_SHADER, tescShader);
+    unsigned int tese_shader = CompileShader(GL_TESS_EVALUATION_SHADER, teseShader);
+    unsigned int fragment_shader = CompileShader(GL_FRAGMENT_SHADER, fragmentShader);
+
+    glAttachShader(program, vertex_shader);
+    glAttachShader(program, tesc_shader);
+    glAttachShader(program, tese_shader);
+    glAttachShader(program, fragment_shader);
+    glLinkProgram(program);
+
+    int success;
+    char infoLog[512];
+    glGetProgramiv(program, GL_LINK_STATUS, &success);
+    if(!success) {
+        glGetProgramInfoLog(program, 512, NULL, infoLog);
+        std::cout << "ERROR::SHADER::PROGRAM::LINKING_FAILED\n" << infoLog << std::endl;
+    }
+    glValidateProgram(program);
+
+    glDeleteShader(vertex_shader);
+    glDeleteShader(tesc_shader);
+    glDeleteShader(tese_shader);
+    glDeleteShader(fragment_shader);
+
+    m_shaderProgramID = program;
+}
+
 unsigned int Shader::CompileShader(unsigned int type, const std::string& source) {
     unsigned int id = glCreateShader(type);
     const char* src = source.c_str(); // Returns pointer to data in std::string

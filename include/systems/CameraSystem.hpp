@@ -14,11 +14,9 @@
 
 class CameraSystem : public System {
     public:
-        void Update(float deltaTime);
-
-        void ProcessKeyboardInput(InputManager& input, float deltaTime);
-        void ProcessMouseInput(InputManager& input, float deltaTime);
-        
+        void Update(float deltaTime);        
     private:
+        void ProcessKeyboardInput(float deltaTime);
+        void ProcessMouseInput(float deltaTime);
         void UpdateVectors();
 };

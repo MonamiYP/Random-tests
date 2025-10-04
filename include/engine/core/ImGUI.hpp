@@ -10,5 +10,7 @@ class ImGUI {
         ~ImGUI();
         
         void setupImGUI(GLFWwindow* window);
+        void startFrame();
         void drawGUI();
+        void endFrame();
 };

@@ -25,6 +25,7 @@ class Shader {
         unsigned int CompileShader(unsigned int type, const std::string& source);
         std::string ParseShader(const std::string& filepath);
         void CreateShaderProgram(const std::string& vertexShader, const std::string& fragmentShader);
+        void CreateShaderProgram(const std::string& vertexShader, const std::string& tescShader, const std::string& teseShader, const std::string& fragmentShader);
 
         int GetUniformLocation(const std::string& name);
 

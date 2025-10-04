@@ -10,8 +10,8 @@ struct Camera {
     glm::vec3 worldUp{0.0f, 1.0f, 0.0f};
 
     float fov{40.0f};
-    float aspectRatio{1.0f};
-    glm::vec2 clip{1.0f, 10.0f};
+    float aspectRatio{800.0f/600.0f};
+    glm::vec2 clip{0.1f, 50.0f};
 
     float movementSpeed{3.0f};
     float mouseSensitivity{0.1f};

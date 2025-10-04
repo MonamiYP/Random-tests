@@ -16,8 +16,11 @@
 
 #include "Transform.hpp"
 #include "Camera.hpp"
+#include "Terrain.hpp"
+
 #include "CameraSystem.hpp"
 #include "RenderSystem.hpp"
+#include "TerrainSystem.hpp"
 
 class Engine {    
     public:
@@ -46,4 +49,5 @@ class Engine {
 
         std::shared_ptr<CameraSystem> m_cameraSystem;
         std::shared_ptr<RenderSystem> m_renderSystem;
+        std::shared_ptr<TerrainSystem> m_terrainSystem;
 };

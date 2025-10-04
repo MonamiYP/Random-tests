@@ -3,13 +3,12 @@
 extern ECS ecs;
 
 void CameraSystem::Update(float deltaTime) {
-    InputManager& input = InputManager::Get();
-
-    ProcessKeyboardInput(input, deltaTime);
-    ProcessMouseInput(input, deltaTime);
+    ProcessKeyboardInput(deltaTime);
+    ProcessMouseInput(deltaTime);
 }
 
-void CameraSystem::ProcessKeyboardInput(InputManager& input, float deltaTime) {
+void CameraSystem::ProcessKeyboardInput(float deltaTime) {
+    InputManager& input = InputManager::Get();
     for (const auto& entity : m_Entities) {
         auto& transform = ecs.GetComponent<Transform>(entity);
         auto& camera = ecs.GetComponent<Camera>(entity);
@@ -32,7 +31,8 @@ void CameraSystem::ProcessKeyboardInput(InputManager& input, float deltaTime) {
     }
 }
 
-void CameraSystem::ProcessMouseInput(InputManager& input, float deltaTime) {
+void CameraSystem::ProcessMouseInput(float deltaTime) {
+    InputManager& input = InputManager::Get();
     for (const auto& entity : m_Entities) {
         auto& transform = ecs.GetComponent<Transform>(entity);
         auto& camera = ecs.GetComponent<Camera>(entity);

@@ -26,6 +26,7 @@ bool Window::setupWindow() {
 
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);
+    // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     return true;
 }
 

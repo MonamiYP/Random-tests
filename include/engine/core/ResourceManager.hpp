@@ -7,7 +7,9 @@
 
 class ResourceManager {
     public:
+        static void loadResources();
         static Shader* loadShader(const std::string& name, const std::string& vertexPath, const std::string& fragmentPath);
+        static Shader* loadShader(const std::string& name, const std::string& vertexPath, const std::string& tesselationControlPath, const std::string& tesselationEvaluationPath, const std::string& fragmentPath);
         static Shader* getShader(const std::string& name);
         
         static Model* loadModel(const std::string& name, const std::string& path);
