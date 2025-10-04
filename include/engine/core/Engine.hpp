@@ -13,14 +13,17 @@
 #include "Model.hpp"
 #include "ImGUI.hpp"
 #include "ECS.hpp"
+#include "Primitives.hpp"
 
 #include "Transform.hpp"
 #include "Camera.hpp"
 #include "Terrain.hpp"
+#include "Light.hpp"
 
 #include "CameraSystem.hpp"
 #include "RenderSystem.hpp"
 #include "TerrainSystem.hpp"
+#include "LightSystem.hpp"
 
 class Engine {    
     public:
@@ -50,4 +53,5 @@ class Engine {
         std::shared_ptr<CameraSystem> m_cameraSystem;
         std::shared_ptr<RenderSystem> m_renderSystem;
         std::shared_ptr<TerrainSystem> m_terrainSystem;
+        std::shared_ptr<LightSystem> m_lightSystem;
 };

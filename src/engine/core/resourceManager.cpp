@@ -5,6 +5,7 @@ std::unordered_map<std::string, std::unique_ptr<Model>> ResourceManager::m_model
 
 void ResourceManager::loadResources() {
     loadShader("default", "../res/shaders/basic.vert", "../res/shaders/basic.frag");
+    loadShader("singleColor", "../res/shaders/basic.vert", "../res/shaders/singleColor.frag");
     loadShader("terrain", "../res/shaders/terrain.vert", "../res/shaders/terrain_noLOD.tesc", "../res/shaders/terrain.tese", "../res/shaders/terrain.frag");
 }
 
@@ -58,6 +59,20 @@ Model* ResourceManager::loadModel(const std::string& name, const std::string& pa
     auto model = std::make_unique<Model>();
     Model* modelPtr = model.get();
     modelPtr->LoadModel(path);
+    
+    m_models[name] = std::move(model);
+
+    return modelPtr;
+}
+
+Model* ResourceManager::loadModel(const std::string& name, const Model& sourceModel) {
+    auto i = m_models.find(name);
+    if (i != m_models.end()) { // Model already added to list
+        return i->second.get();
+    }
+
+    auto model = std::make_unique<Model>(std::move(sourceModel));
+    Model* modelPtr = model.get();
     
     m_models[name] = std::move(model);
 

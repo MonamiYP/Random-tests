@@ -31,10 +31,9 @@ void Engine::Init() {
 
     ResourceManager::loadResources();
 
-    m_light = Light(glm::vec3(0.0f, 5.0f, 0.0f), glm::vec3(1.0f, 0.8f, 0.8f));
-    Shader* shader = ResourceManager::getShader("terrain");
-    shader->Bind();
-    shader->SetLight(m_light);
+    // Shader* shader = ResourceManager::getShader("terrain");
+    // shader->Bind();
+    // shader->SetLight(m_light);
 
     RegisterComponents();
     RegisterSystems();
@@ -63,11 +62,16 @@ void Engine::Update() {
     shader_default->SetMatrix4("u_projection", camera_camera.projectionMatrix);
     shader_default->SetVector3("u_viewPos", camera_transform.position);
 
-    Shader* shader_terrain = ResourceManager::getShader("terrain");
-    shader_terrain->Bind();
-    shader_terrain->SetMatrix4("u_view", camera_camera.viewMatrix);
-    shader_terrain->SetMatrix4("u_projection", camera_camera.projectionMatrix);
-    shader_terrain->SetVector3("u_viewPos", camera_transform.position);
+    Shader* shader_light = ResourceManager::getShader("singleColor");
+    shader_light->Bind();
+    shader_light->SetMatrix4("u_view", camera_camera.viewMatrix);
+    shader_light->SetMatrix4("u_projection", camera_camera.projectionMatrix);
+
+    // Shader* shader_terrain = ResourceManager::getShader("terrain");
+    // shader_terrain->Bind();
+    // shader_terrain->SetMatrix4("u_view", camera_camera.viewMatrix);
+    // shader_terrain->SetMatrix4("u_projection", camera_camera.projectionMatrix);
+    // shader_terrain->SetVector3("u_viewPos", camera_transform.position);
 
     InputManager::Get().resetMouse();
 }
@@ -84,8 +88,8 @@ void Engine::Render() {
         m_imGUI.drawGUI(); 
     };
 
-    m_terrainSystem->render();
-    // m_renderSystem->render();
+    // m_terrainSystem->render();
+    m_renderSystem->render();
     m_imGUI.endFrame();
 }
 
@@ -95,6 +99,7 @@ void Engine::RegisterComponents() {
     ecs.RegisterComponent<ModelComponent>();
     ecs.RegisterComponent<Material>();
     ecs.RegisterComponent<Terrain>();
+    ecs.RegisterComponent<Light>();
 }
 
 void Engine::RegisterSystems() {
@@ -122,6 +127,13 @@ void Engine::RegisterSystems() {
         signature.set(ecs.GetComponentType<Terrain>());
         ecs.SetSystemSignature<TerrainSystem>(signature);
     }
+
+    m_lightSystem = ecs.RegisterSystem<LightSystem>();
+    {
+        Signature signature;
+        signature.set(ecs.GetComponentType<Light>());
+        ecs.SetSystemSignature<LightSystem>(signature);
+    }
 }
 
 void Engine::CreateEntities() {
@@ -136,6 +148,14 @@ void Engine::CreateEntities() {
     ecs.AddComponent(car, Transform {});
     ecs.AddComponent(car, ModelComponent { .model = ResourceManager::getModel("car") });
     ecs.AddComponent(car, Material { .shaderName = "default" });
+
+    /* Light */
+    ResourceManager::loadModel("cube", Primitives::CreateCube());
+    Entity light = ecs.CreateEntity();
+    ecs.AddComponent(light, Transform { .position = glm::vec3(0.0f, 5.0f, 0.0f), .scale = glm::vec3{0.2f} });
+    ecs.AddComponent(light, ModelComponent { .model = ResourceManager::getModel("cube") });
+    ecs.AddComponent(light, Material { .shaderName = "singleColor" });
+    ecs.AddComponent(light, Light {});
 
     /* Terrain */
     Entity terrain = ecs.CreateEntity();

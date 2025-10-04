@@ -13,6 +13,7 @@ void RenderSystem::render() {
 
         shader->Bind();
         glm::mat4 model = glm::translate(glm::mat4(1.0f), transform.position);
+        model = glm::scale(model, transform.scale); 
         shader->SetMatrix4("u_model", model);
         modelComponent.model->Draw(*shader);
     }

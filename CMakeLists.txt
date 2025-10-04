@@ -35,7 +35,7 @@ target_include_directories(${PROJECT_NAME}
     PRIVATE include/entities
     PRIVATE include/components
     PRIVATE include/systems
-    PRIVATE include/primitives
+    PRIVATE include/util
 )
 
 target_link_libraries(${PROJECT_NAME} 

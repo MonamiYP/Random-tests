@@ -13,6 +13,7 @@ class ResourceManager {
         static Shader* getShader(const std::string& name);
         
         static Model* loadModel(const std::string& name, const std::string& path);
+        static Model* loadModel(const std::string& name, const Model& model);
         static Model* getModel(const std::string& name);
 
         static void clear() { m_shaders.clear(); m_models.clear(); }

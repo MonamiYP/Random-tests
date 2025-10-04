@@ -19,6 +19,7 @@ class Model {
     public:
         Model() {};
         void LoadModel(std::string const& path);
+        void LoadModelFromMesh(Mesh& mesh) { m_meshes.push_back(mesh); }
         void Draw(Shader& shader);
         
     private:
