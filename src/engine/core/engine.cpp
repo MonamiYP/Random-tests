@@ -151,7 +151,7 @@ void Engine::CreateEntities() {
     /* Light */
     ResourceManager::loadModel("cube", Primitives::CreateCube());
     Entity light = ecs.CreateEntity();
-    ecs.AddComponent(light, Transform { .position = glm::vec3(0.0f, 5.0f, 0.0f), .scale = glm::vec3{0.2f} });
+    ecs.AddComponent(light, Transform { .position = glm::vec3(-10.0f, 5.0f, 0.0f), .scale = glm::vec3{0.2f} });
     ecs.AddComponent(light, ModelComponent { .model = ResourceManager::getModel("cube") });
     ecs.AddComponent(light, Material { .shaderName = "singleColor" });
     ecs.AddComponent(light, Light {});
@@ -159,6 +159,6 @@ void Engine::CreateEntities() {
     /* Terrain */
     Entity terrain = ecs.CreateEntity();
     ecs.AddComponent(terrain, Transform { .position = glm::vec3(210.0f, 0.0f, 0.0f) });
-    ecs.AddComponent(terrain, Terrain { .shaderName = "terrain", .radius = 200.0f, .resolution = 10 });
+    ecs.AddComponent(terrain, Terrain { .shaderName = "terrain", .radius = 200.0f, .resolution = 20 });
     m_terrainSystem->generateVertices();
 }

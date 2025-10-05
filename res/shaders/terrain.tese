@@ -9,12 +9,19 @@ uniform mat4 u_model;
 uniform mat4 u_view;
 uniform mat4 u_projection;
 
-// Planet uniforms
+/* Planet uniforms */
 uniform float u_radius;
-uniform float u_testValue;
+uniform float u_floorDepth;
+// Fractal noise
 uniform float u_fractalNoiseAmplitude;
 uniform float u_fractalNoiseLacunarity;
 uniform float u_fractalNoisePersistence;
+uniform float u_fractalNoiseFrequency;
+// Ridge noise
+uniform float u_ridgeNoiseAmplitude;
+uniform float u_ridgeNoiseLacunarity;
+uniform float u_ridgeNoisePersistence;
+uniform float u_ridgeNoiseFrequency;
 
 //
 // Description : Array and textureless GLSL 2D/3D/4D simplex 
@@ -119,21 +126,49 @@ float sinWave(vec3 pos) {
     return sin(pos.y * 0.5) * 0.01;
 }
 
-float fractalNoise(vec3 pos, int octave, float lacunarity, float persistence) {
+float fractalNoise(vec3 pos, int octave) {
     float noiseSum = 0.0;
     float amplitude = 10.0;
-    float frequency = 0.1;
+    float frequency = u_fractalNoiseFrequency;
 
     for(int i = 0; i < octave; i++) {
         noiseSum += amplitude * snoise(pos * frequency);
-        frequency *= lacunarity;
-        amplitude *= persistence;
+        amplitude *= u_fractalNoisePersistence;
+        frequency *= u_fractalNoiseLacunarity;
     }
     return noiseSum;
 }
 
+float ridgeNoise(vec3 pos, int octave) {
+	float noiseSum = 0.0;
+    float amplitude = 1.0;
+    float frequency = u_ridgeNoiseFrequency;
+    float ridgeWeight = 1.1;
+    float power = 2; // How sharp the ridges are
+
+    for (int i = 0; i < octave; i ++) {
+        float noiseVal = 1 - abs(snoise(pos * frequency));
+        noiseVal = pow(abs(noiseVal), power); // Sharpen ridge
+        noiseVal *= ridgeWeight;
+        ridgeWeight = noiseVal;
+
+        noiseSum += noiseVal * amplitude;
+        amplitude *= u_ridgeNoisePersistence;
+        frequency *= u_ridgeNoiseLacunarity;
+    }
+	return noiseSum;
+}
+
+float addFloor(float height) {
+    height = height - u_floorDepth;
+    height = max(0, height);
+    return height;
+}
+
 float computeHeight(vec3 pos) {
-    float height = u_fractalNoiseAmplitude * fractalNoise(pos, 5, u_fractalNoiseLacunarity, u_fractalNoisePersistence);
+    float height = u_fractalNoiseAmplitude * fractalNoise(pos, 5);
+    height += u_ridgeNoiseAmplitude * ridgeNoise(pos, 5);
+    height = addFloor(height);
     return height;
 }
 

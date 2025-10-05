@@ -11,7 +11,7 @@ struct Camera {
 
     float fov{40.0f};
     float aspectRatio{800.0f/600.0f};
-    glm::vec2 clip{0.1f, 50.0f};
+    glm::vec2 clip{0.1f, 200.0f};
 
     float movementSpeed{10.0f};
     float mouseSensitivity{0.1f};

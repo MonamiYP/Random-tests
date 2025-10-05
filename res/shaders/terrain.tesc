@@ -12,7 +12,7 @@ uniform mat4 u_model;
 const int MIN_TESS_LEVEL = 2;
 const int MAX_TESS_LEVEL = 128;
 float MIN_DISTANCE = 25;
-float MAX_DISTANCE = 60;
+float MAX_DISTANCE = 100;
 
 void main() {
     if (gl_InvocationID == 0) {
