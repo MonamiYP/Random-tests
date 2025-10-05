@@ -1,13 +1,15 @@
 #pragma once
 
 #include "ECS.hpp"
-#include "components/Transform.hpp"
 #include "ResourceManager.hpp"
+#include "Shader.hpp"
 
 #include "Light.hpp"
 #include "Transform.hpp"
 
 class LightSystem : public System {
     public:
-        void setupShaderLights();
+        void setupShaders();
+    private:
+        void addLightToShader(Shader* shader);
 };

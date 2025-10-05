@@ -6,7 +6,7 @@ std::unordered_map<std::string, std::unique_ptr<Model>> ResourceManager::m_model
 void ResourceManager::loadResources() {
     loadShader("default", "../res/shaders/basic.vert", "../res/shaders/basic.frag");
     loadShader("singleColor", "../res/shaders/basic.vert", "../res/shaders/singleColor.frag");
-    loadShader("terrain", "../res/shaders/terrain.vert", "../res/shaders/terrain_noLOD.tesc", "../res/shaders/terrain.tese", "../res/shaders/terrain.frag");
+    loadShader("terrain", "../res/shaders/terrain.vert", "../res/shaders/terrain.tesc", "../res/shaders/terrain.tese", "../res/shaders/terrain.frag");
 }
 
 Shader* ResourceManager::loadShader(const std::string& name, const std::string& vertexPath, const std::string& fragmentPath) {

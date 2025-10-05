@@ -21,4 +21,5 @@ class TerrainSystem : public System {
     public:
         void generateVertices();
         void render();
+        void renderGUI();
 };

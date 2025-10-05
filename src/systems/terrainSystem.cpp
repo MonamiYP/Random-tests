@@ -18,17 +18,6 @@ void TerrainSystem::render() {
         shader->SetMatrix4("u_model", model);
         shader->SetFloat("u_radius", terrain.radius);
 
-        
-        ImGui::Begin("Terrain Controls");
-        if (ImGui::TreeNode("Fractal Noise")) {
-            ImGui::SliderFloat("Lacunarity", &terrain.lacunarity, 1.0f, 4.0f, "%.2f");
-            ImGui::SliderFloat("Persistence", &terrain.persistence, 0.1f, 1.0f, "%.2f");
-            ImGui::SliderFloat("Amplitude", &terrain.amplitude, 0.0f, 0.05f, "%.3f");
-            ImGui::TreePop();
-        }
-        ImGui::End();
-
-
         shader->SetFloat("u_fractalNoiseAmplitude", terrain.amplitude);
         shader->SetFloat("u_fractalNoiseLacunarity", terrain.lacunarity);
         shader->SetFloat("u_fractalNoisePersistence", terrain.persistence);
@@ -38,6 +27,21 @@ void TerrainSystem::render() {
         glPatchParameteri(GL_PATCH_VERTICES, 4);
         glDrawArrays(GL_PATCHES, 0, 4*terrain.resolution*terrain.resolution*6);
         m_VAO.Unbind();
+    }
+}
+
+void TerrainSystem::renderGUI() {
+    for (const auto& entity : m_Entities) {
+        auto& terrain = ecs.GetComponent<Terrain>(entity);
+
+        ImGui::Begin("Terrain Controls");
+        if (ImGui::TreeNode("Fractal Noise")) {
+            ImGui::SliderFloat("Lacunarity", &terrain.lacunarity, 1.0f, 4.0f, "%.2f");
+            ImGui::SliderFloat("Persistence", &terrain.persistence, 0.1f, 1.0f, "%.2f");
+            ImGui::SliderFloat("Amplitude", &terrain.amplitude, 0.0f, 0.05f, "%.3f");
+            ImGui::TreePop();
+        }
+        ImGui::End();
     }
 }
 

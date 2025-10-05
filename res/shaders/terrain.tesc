@@ -10,9 +10,9 @@ float distance[];
 uniform mat4 u_model;
 
 const int MIN_TESS_LEVEL = 2;
-const int MAX_TESS_LEVEL = 32;
-float MIN_DISTANCE = 10;
-float MAX_DISTANCE = u_radius/2;
+const int MAX_TESS_LEVEL = 128;
+float MIN_DISTANCE = 25;
+float MAX_DISTANCE = 60;
 
 void main() {
     if (gl_InvocationID == 0) {
@@ -29,10 +29,10 @@ void main() {
         vec4 cameraPos = vec4(u_viewPos, 1.0);
 
         // Find the distance of each vertex from player (between 0 and 1)
-        float distance00 = 1.0 - clamp((length(cameraPos-worldPos00)-MIN_DISTANCE) / (MAX_DISTANCE-MIN_DISTANCE), 0.0, 1.0);
-        float distance10 = 1.0 - clamp((length(cameraPos-worldPos10)-MIN_DISTANCE) / (MAX_DISTANCE-MIN_DISTANCE), 0.0, 1.0);
-        float distance01 = 1.0 - clamp((length(cameraPos-worldPos01)-MIN_DISTANCE) / (MAX_DISTANCE-MIN_DISTANCE), 0.0, 1.0);
-        float distance11 = 1.0 - clamp((length(cameraPos-worldPos11)-MIN_DISTANCE) / (MAX_DISTANCE-MIN_DISTANCE), 0.0, 1.0);
+        float distance00 = clamp((length(cameraPos-worldPos00)-MIN_DISTANCE) / (MAX_DISTANCE-MIN_DISTANCE), 0.0, 1.0);
+        float distance10 = clamp((length(cameraPos-worldPos10)-MIN_DISTANCE) / (MAX_DISTANCE-MIN_DISTANCE), 0.0, 1.0);
+        float distance01 = clamp((length(cameraPos-worldPos01)-MIN_DISTANCE) / (MAX_DISTANCE-MIN_DISTANCE), 0.0, 1.0);
+        float distance11 = clamp((length(cameraPos-worldPos11)-MIN_DISTANCE) / (MAX_DISTANCE-MIN_DISTANCE), 0.0, 1.0);
 
         // Determine how much tesselation we need depending on distance from player
         float tessLevel0 = mix(MAX_TESS_LEVEL, MIN_TESS_LEVEL, min(distance01, distance00));

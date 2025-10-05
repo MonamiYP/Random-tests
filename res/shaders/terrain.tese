@@ -114,14 +114,15 @@ float snoise(vec3 v) {
 /* 
     Code
 */
+
 float sinWave(vec3 pos) {
     return sin(pos.y * 0.5) * 0.01;
 }
 
 float fractalNoise(vec3 pos, int octave, float lacunarity, float persistence) {
     float noiseSum = 0.0;
-    float amplitude = 1.0;
-    float frequency = 1.0;
+    float amplitude = 10.0;
+    float frequency = 0.1;
 
     for(int i = 0; i < octave; i++) {
         noiseSum += amplitude * snoise(pos * frequency);
@@ -132,7 +133,8 @@ float fractalNoise(vec3 pos, int octave, float lacunarity, float persistence) {
 }
 
 float computeHeight(vec3 pos) {
-    return u_fractalNoiseAmplitude * fractalNoise(pos, 5, u_fractalNoiseLacunarity, u_fractalNoisePersistence);
+    float height = u_fractalNoiseAmplitude * fractalNoise(pos, 5, u_fractalNoiseLacunarity, u_fractalNoisePersistence);
+    return height;
 }
 
 void main() {
@@ -152,10 +154,10 @@ void main() {
     vec4 p11 = gl_in[3].gl_Position;
 
     // Interpolate horizontally
-    vec4 p0 = p00 + (p10 - p00) * u;
-    vec4 p1 = p01 + (p11 - p01) * u;
+    vec4 p0 = (p10 - p00) * u + p00;
+    vec4 p1 = (p11 - p01) * u + p01;
     // Interpolate vertically, p is position inside quad patch
-    vec4 p = p0 + (p1 - p0) * v;
+    vec4 p = (p1 - p0) * v + p0;
 
     float l = length(p); // Distance from origin
 
@@ -166,9 +168,22 @@ void main() {
     /* Terrain Details */
     float height = computeHeight(spherePosition);
     spherePosition *= (1.0 + height);
+    vec4 worldPos = u_model * vec4(spherePosition, p.w);
+    FragPos = worldPos.xyz;
 
-    FragPos = spherePosition;
-    Normal = normalize(spherePosition);
+    /* Calculate normals */
+    float epsilon = 1e-3;
+    vec3 n = normalize(spherePosition);
+    vec3 referenceDir = abs(n.y) < 0.999 ? vec3(0,1,0) : vec3(1,0,0); // Make sure cross products aren't 0
+    vec3 orth1 = normalize(cross(referenceDir, n));
+    vec3 orth2 = normalize(cross(n, orth1));
 
-    gl_Position = u_projection * u_view * u_model * vec4(spherePosition, 1.0);
+    float h0 = computeHeight(n);
+    float h1 = computeHeight(normalize(n + orth1 * epsilon));
+    float h2 = computeHeight(normalize(n + orth2 * epsilon));
+    vec3 normal = normalize(n - ((h1 - h0) * orth1 + (h2 - h0) * orth2) / epsilon);
+    
+    Normal = normalize(mat3(u_model) * normal);
+
+    gl_Position = u_projection * u_view * worldPos;
 }

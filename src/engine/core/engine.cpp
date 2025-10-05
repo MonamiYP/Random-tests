@@ -31,13 +31,11 @@ void Engine::Init() {
 
     ResourceManager::loadResources();
 
-    // Shader* shader = ResourceManager::getShader("terrain");
-    // shader->Bind();
-    // shader->SetLight(m_light);
-
     RegisterComponents();
     RegisterSystems();
     CreateEntities();
+
+    m_lightSystem->setupShaders();
 }
 
 void Engine::Update() {
@@ -67,11 +65,11 @@ void Engine::Update() {
     shader_light->SetMatrix4("u_view", camera_camera.viewMatrix);
     shader_light->SetMatrix4("u_projection", camera_camera.projectionMatrix);
 
-    // Shader* shader_terrain = ResourceManager::getShader("terrain");
-    // shader_terrain->Bind();
-    // shader_terrain->SetMatrix4("u_view", camera_camera.viewMatrix);
-    // shader_terrain->SetMatrix4("u_projection", camera_camera.projectionMatrix);
-    // shader_terrain->SetVector3("u_viewPos", camera_transform.position);
+    Shader* shader_terrain = ResourceManager::getShader("terrain");
+    shader_terrain->Bind();
+    shader_terrain->SetMatrix4("u_view", camera_camera.viewMatrix);
+    shader_terrain->SetMatrix4("u_projection", camera_camera.projectionMatrix);
+    shader_terrain->SetVector3("u_viewPos", camera_transform.position);
 
     InputManager::Get().resetMouse();
 }
@@ -84,12 +82,13 @@ void Engine::Render() {
     m_renderSystem->clear();
     m_imGUI.startFrame();
 
-    if(m_config.guiEnable) { 
-        m_imGUI.drawGUI(); 
-    };
-
-    // m_terrainSystem->render();
+    m_terrainSystem->render();
     m_renderSystem->render();
+
+    if(m_config.guiEnable) { 
+        m_imGUI.drawGUI();
+        m_terrainSystem->renderGUI();
+    };
     m_imGUI.endFrame();
 }
 
@@ -159,7 +158,7 @@ void Engine::CreateEntities() {
 
     /* Terrain */
     Entity terrain = ecs.CreateEntity();
-    ecs.AddComponent(terrain, Transform { .position = glm::vec3(20.0f, 0.0f, 0.0f) });
-    ecs.AddComponent(terrain, Terrain { .shaderName = "terrain", .radius = 15.0f });
+    ecs.AddComponent(terrain, Transform { .position = glm::vec3(210.0f, 0.0f, 0.0f) });
+    ecs.AddComponent(terrain, Terrain { .shaderName = "terrain", .radius = 200.0f, .resolution = 10 });
     m_terrainSystem->generateVertices();
 }

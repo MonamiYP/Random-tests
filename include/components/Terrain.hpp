@@ -12,5 +12,5 @@ struct Terrain {
     // Noise settings
     float lacunarity = 1.0f;
     float persistence = 0.5f;
-    float amplitude = 0.01f;
+    float amplitude = 0.001f;
 };
