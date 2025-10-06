@@ -148,13 +148,9 @@ void Engine::CreateEntities() {
     ecs.AddComponent(car, ModelComponent { .model = ResourceManager::getModel("car") });
     ecs.AddComponent(car, Material { .shaderName = "default" });
 
-    /* Light */
-    ResourceManager::loadModel("cube", Primitives::CreateCube());
-    Entity light = ecs.CreateEntity();
-    ecs.AddComponent(light, Transform { .position = glm::vec3(-10.0f, 5.0f, 0.0f), .scale = glm::vec3{0.2f} });
-    ecs.AddComponent(light, ModelComponent { .model = ResourceManager::getModel("cube") });
-    ecs.AddComponent(light, Material { .shaderName = "singleColor" });
-    ecs.AddComponent(light, Light {});
+    /* Directional Light */
+    Entity directionalLight = ecs.CreateEntity();
+    ecs.AddComponent(directionalLight, Light { .type = LightCasterType::Directional });
 
     /* Terrain */
     Entity terrain = ecs.CreateEntity();

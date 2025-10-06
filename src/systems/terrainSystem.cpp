@@ -18,9 +18,17 @@ void TerrainSystem::render() {
         shader->SetMatrix4("u_model", model);
         shader->SetFloat("u_radius", terrain.radius);
 
-        shader->SetFloat("u_fractalNoiseAmplitude", terrain.amplitude);
-        shader->SetFloat("u_fractalNoiseLacunarity", terrain.lacunarity);
-        shader->SetFloat("u_fractalNoisePersistence", terrain.persistence);
+        shader->SetFloat("u_fractalNoiseAmplitude", terrain.fractal.amplitude);
+        shader->SetFloat("u_fractalNoiseLacunarity", terrain.fractal.lacunarity);
+        shader->SetFloat("u_fractalNoisePersistence", terrain.fractal.persistence);
+        shader->SetFloat("u_fractalNoiseFrequency", terrain.fractal.frequency);
+
+        shader->SetFloat("u_ridgeNoiseAmplitude", terrain.ridge.amplitude);
+        shader->SetFloat("u_ridgeNoiseLacunarity", terrain.ridge.lacunarity);
+        shader->SetFloat("u_ridgeNoisePersistence", terrain.ridge.persistence);
+        shader->SetFloat("u_ridgeNoiseFrequency", terrain.ridge.frequency);
+
+        shader->SetFloat("u_floorDepth", terrain.floorDepth);
         
         m_VAO.Bind();
 
@@ -36,11 +44,22 @@ void TerrainSystem::renderGUI() {
 
         ImGui::Begin("Terrain Controls");
         if (ImGui::TreeNode("Fractal Noise")) {
-            ImGui::SliderFloat("Lacunarity", &terrain.lacunarity, 1.0f, 4.0f, "%.2f");
-            ImGui::SliderFloat("Persistence", &terrain.persistence, 0.1f, 1.0f, "%.2f");
-            ImGui::SliderFloat("Amplitude", &terrain.amplitude, 0.0f, 0.05f, "%.3f");
+            ImGui::SliderFloat("Frequency", &terrain.fractal.frequency, 0.0f, 0.5f, "%.3f");
+            ImGui::SliderFloat("Lacunarity", &terrain.fractal.lacunarity, 1.0f, 4.0f, "%.3f");
+            ImGui::SliderFloat("Persistence", &terrain.fractal.persistence, 0.0f, 1.0f, "%.3f");
+            ImGui::SliderFloat("Amplitude", &terrain.fractal.amplitude, 0.0f, 0.05f, "%.3f");
+            
+            ImGui::TreePop();
+        }   
+        if (ImGui::TreeNode("Ridge Noise")) {
+            ImGui::SliderFloat("Frequency", &terrain.ridge.frequency, 0.0f, 10.0f, "%.1f");
+            ImGui::SliderFloat("Lacunarity", &terrain.ridge.lacunarity, 1.0f, 4.0f, "%.3f");
+            ImGui::SliderFloat("Persistence", &terrain.ridge.persistence, 0.0f, 1.0f, "%.3f");
+            ImGui::SliderFloat("Amplitude", &terrain.ridge.amplitude, 0.0f, 0.05f, "%.3f");
+
             ImGui::TreePop();
         }
+        ImGui::SliderFloat("Floor depth", &terrain.floorDepth, 0.0f, 0.005f, "%.4f");
         ImGui::End();
     }
 }
