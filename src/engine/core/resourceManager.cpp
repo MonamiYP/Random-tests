@@ -7,6 +7,8 @@ void ResourceManager::loadResources() {
     loadShader("default", "../res/shaders/basic.vert", "../res/shaders/basic.frag");
     loadShader("singleColor", "../res/shaders/basic.vert", "../res/shaders/singleColor.frag");
     loadShader("terrain", "../res/shaders/terrain.vert", "../res/shaders/terrain.tesc", "../res/shaders/terrain.tese", "../res/shaders/terrain.frag");
+    loadShader("depth", "../res/shaders/shadowMap.vert", "../res/shaders/shadowMap.frag");
+    loadShader("debug", "../res/shaders/debugDepthQuad.vert", "../res/shaders/debugDepthQuad.frag");
 }
 
 Shader* ResourceManager::loadShader(const std::string& name, const std::string& vertexPath, const std::string& fragmentPath) {

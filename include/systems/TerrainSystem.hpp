@@ -3,12 +3,13 @@
 #include "ECS.hpp"
 #include "Terrain.hpp"
 #include "Transform.hpp"
-#include "ResourceManager.hpp"
+#include "Shader.hpp"
 
 #include "VertexArray.hpp"
 #include "VertexBuffer.hpp"
 #include "VertexBufferLayout.hpp"
 
+#include <glm/gtc/matrix_transform.hpp>
 #include <imgui/imgui.h>
 #include <imgui/imgui_impl_glfw.h>
 #include <imgui/imgui_impl_opengl3.h>
@@ -20,6 +21,6 @@ class TerrainSystem : public System {
         std::vector<float> getPatchedCubeVertices(float width, float resolution);
     public:
         void generateVertices();
-        void render();
-        void renderGUI();
+        void render(Shader* shader);
+        void updateGUI();
 };

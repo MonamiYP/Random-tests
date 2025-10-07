@@ -4,13 +4,10 @@
 
 extern ECS ecs;
 
-void TerrainSystem::render() {
+void TerrainSystem::render(Shader* shader) {
     for (const auto& entity : m_Entities) {
         auto& transform = ecs.GetComponent<Transform>(entity);
         auto& terrain = ecs.GetComponent<Terrain>(entity);
-
-        Shader* shader = ResourceManager::getShader(terrain.shaderName);
-        if (!shader) continue;
 
         shader->Bind();
 
@@ -38,7 +35,7 @@ void TerrainSystem::render() {
     }
 }
 
-void TerrainSystem::renderGUI() {
+void TerrainSystem::updateGUI() {
     for (const auto& entity : m_Entities) {
         auto& terrain = ecs.GetComponent<Terrain>(entity);
 

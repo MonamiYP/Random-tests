@@ -3,12 +3,10 @@
 #include "ECS.hpp"
 #include "components/ModelComponent.hpp"
 #include "components/Transform.hpp"
-
 #include "ResourceManager.hpp"
-#include "Shader.hpp"
 
-class RenderSystem : public System {
+class ShadowMapSystem : public System {
     public:
-        void render(Shader* shader);  
+        void render();
         void clear();
 };

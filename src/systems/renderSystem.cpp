@@ -2,15 +2,11 @@
 
 extern ECS ecs;
 
-void RenderSystem::render() {
+void RenderSystem::render(Shader* shader) {
     for (const auto& entity : m_Entities) {
         auto& transform = ecs.GetComponent<Transform>(entity);
         auto& modelComponent = ecs.GetComponent<ModelComponent>(entity);
-        auto& material = ecs.GetComponent<Material>(entity);
-
-        Shader* shader = ResourceManager::getShader(material.shaderName);
-        if (!shader) continue;
-
+        
         shader->Bind();
         glm::mat4 model = glm::translate(glm::mat4(1.0f), transform.position);
         model = glm::scale(model, transform.scale); 

@@ -24,8 +24,6 @@ struct Terrain {
     float floorDepth = 0.0001f;
     float resolution = 5;
 
-    std::string shaderName = "terrain";
-
     FractalSettings fractal;
     RidgeSettings   ridge;
 };

@@ -1,6 +1,6 @@
 #include "Window.hpp"
 
-bool Window::setupWindow() {
+bool Window::setupWindow(float width, float height) {
     // setup GLFW
     if (!glfwInit()) return false;
 
@@ -9,7 +9,7 @@ bool Window::setupWindow() {
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 
-    m_window = glfwCreateWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "OpenGL", NULL, NULL);
+    m_window = glfwCreateWindow(width, height, "OpenGL", NULL, NULL);
     if (!m_window) {
         std::cerr << "Failed to create GLFW window" << std::endl;
         glfwTerminate();

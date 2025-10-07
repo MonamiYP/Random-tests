@@ -20,6 +20,8 @@
 #include "Terrain.hpp"
 #include "Light.hpp"
 
+#include "ShadowMap.hpp"
+
 #include "CameraSystem.hpp"
 #include "RenderSystem.hpp"
 #include "TerrainSystem.hpp"
@@ -33,11 +35,14 @@ class Engine {
         void Run();
 
     private:
+        unsigned int planeVAO;
+        unsigned int quadVAO = 0;
+        unsigned int quadVBO;
+
         EngineConfig m_config;
         Window m_window;
         ImGUI m_imGUI;
-
-        Light m_light;
+        ShadowMap m_shadowMap;
 
         Entity m_camera;
 
