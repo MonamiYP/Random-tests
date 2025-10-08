@@ -10,6 +10,8 @@
 class LightSystem : public System {
     public:
         void setupShaders();
+        void setupLightSpaceMatrix();
+        
     private:
         void addLightToShader(Shader* shader);
 };

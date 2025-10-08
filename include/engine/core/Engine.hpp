@@ -35,10 +35,6 @@ class Engine {
         void Run();
 
     private:
-        unsigned int planeVAO;
-        unsigned int quadVAO = 0;
-        unsigned int quadVBO;
-
         EngineConfig m_config;
         Window m_window;
         ImGUI m_imGUI;

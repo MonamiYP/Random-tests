@@ -2,9 +2,11 @@
 
 #include <glad/glad.h>
 #include <glm/glm.hpp>
+#include <GLFW/glfw3.h>
 
 #include "Shader.hpp"
 #include "ResourceManager.hpp"
+#include "Window.hpp"
 
 class ShadowMap {
     private:
@@ -21,9 +23,9 @@ class ShadowMap {
 
         unsigned int getDepthMap() { return m_shadowMap; }
 
-        void prepareShadowRender(glm::vec3 lightDir);
+        void prepareShadowRender(glm::vec3 lightPos);
 
         void attachTextureToFBO();
         void bindFrameBuffer();
-        void unbindFrameBuffer(int width, int height);
+        void unbindFrameBuffer(Window* window);
 };

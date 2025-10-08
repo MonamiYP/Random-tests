@@ -16,4 +16,7 @@ struct Light {
     glm::vec3 specular = glm::vec3(1.0f);
 
     glm::vec3 direction = glm::vec3(1.0f, 0.0f, 0.0f);
+
+    bool castsShadow = false;
+    glm::mat4 lightSpaceMatrix;
 };

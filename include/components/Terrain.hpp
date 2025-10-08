@@ -12,7 +12,7 @@ struct FractalSettings {
 
 struct RidgeSettings {
     float amplitude   = 0.0f;
-    float frequency   = 1.0f;
+    float frequency   = 0.1f;
     float lacunarity  = 1.0f;
     float persistence = 0.5f;
 };

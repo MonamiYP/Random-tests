@@ -37,37 +37,6 @@ void Engine::Init() {
 
     m_lightSystem->setupShaders();
     m_shadowMap.init();
-
-
-    // Temporary
-    float planeVertices[] = {
-        // positions            // normals         // texcoords
-         25.0f, -0.5f,  25.0f,  0.0f, 1.0f, 0.0f,  25.0f,  0.0f,
-        -25.0f, -0.5f,  25.0f,  0.0f, 1.0f, 0.0f,   0.0f,  0.0f,
-        -25.0f, -0.5f, -25.0f,  0.0f, 1.0f, 0.0f,   0.0f, 25.0f,
-
-         25.0f, -0.5f,  25.0f,  0.0f, 1.0f, 0.0f,  25.0f,  0.0f,
-        -25.0f, -0.5f, -25.0f,  0.0f, 1.0f, 0.0f,   0.0f, 25.0f,
-         25.0f, -0.5f, -25.0f,  0.0f, 1.0f, 0.0f,  25.0f, 25.0f
-    };
-    // plane VAO
-    unsigned int planeVBO;
-    glGenVertexArrays(1, &planeVAO);
-    glGenBuffers(1, &planeVBO);
-    glBindVertexArray(planeVAO);
-    glBindBuffer(GL_ARRAY_BUFFER, planeVBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(planeVertices), planeVertices, GL_STATIC_DRAW);
-    glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
-    glEnableVertexAttribArray(1);
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
-    glEnableVertexAttribArray(2);
-    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
-    glBindVertexArray(0);
-
-    Shader* debug = ResourceManager::getShader("debug");
-    debug->Bind();
-    debug->SetInt("depthMap", 0);
 }
 
 void Engine::Update() {
@@ -112,47 +81,21 @@ void Engine::ProcessInput() {
 
 void Engine::Render() {
     m_renderSystem->clear();
-    m_imGUI.startFrame();
 
-    glCullFace(GL_FRONT);
+    // Render light view to depth FBO
     m_shadowMap.prepareShadowRender(glm::vec3(-5.0f, 0.0f, 0.0f));
     m_renderSystem->render(ResourceManager::getShader("depth"));
-    int w, h;
-    glfwGetFramebufferSize(m_window.getWindow(), &w, &h);
-    m_shadowMap.unbindFrameBuffer(w, h);
-    glCullFace(GL_BACK);
+    m_shadowMap.unbindFrameBuffer(&m_window);
 
-    /* render quad */
-    // Shader* debug = ResourceManager::getShader("debug");
-    // debug->Bind();
-    // glActiveTexture(GL_TEXTURE0);
-    // glBindTexture(GL_TEXTURE_2D, m_shadowMap.getDepthMap());
-    
-    // float quadVertices[] = {
-    //     // positions        // texture Coords
-    //     -1.0f,  1.0f, 0.0f, 0.0f, 1.0f,
-    //     -1.0f, -1.0f, 0.0f, 0.0f, 0.0f,
-    //         1.0f,  1.0f, 0.0f, 1.0f, 1.0f,
-    //         1.0f, -1.0f, 0.0f, 1.0f, 0.0f,
-    // };
-    // // setup plane VAO
-    // glGenVertexArrays(1, &quadVAO);
-    // glGenBuffers(1, &quadVBO);
-    // glBindVertexArray(quadVAO);
-    // glBindBuffer(GL_ARRAY_BUFFER, quadVBO);
-    // glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices), &quadVertices, GL_STATIC_DRAW);
-    // glEnableVertexAttribArray(0);
-    // glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
-    // glEnableVertexAttribArray(1);
-    // glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
-    // glBindVertexArray(quadVAO);
-    // glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-    // glBindVertexArray(0);
-
+    // Render to scene
     m_renderSystem->render(ResourceManager::getShader("default"));
+    m_terrainSystem->render(ResourceManager::getShader("terrain"));
 
+    // ImGUI
+    m_imGUI.startFrame();
     if(m_config.guiEnable) { 
         m_imGUI.drawGUI();
+        m_terrainSystem->updateGUI();
     };
     m_imGUI.endFrame();
 }

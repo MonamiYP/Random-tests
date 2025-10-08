@@ -34,13 +34,15 @@ void ShadowMap::attachTextureToFBO() {
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
-void ShadowMap::prepareShadowRender(glm::vec3 lightDir) {
+void ShadowMap::prepareShadowRender(glm::vec3 lightPos) {
+    glCullFace(GL_FRONT);
+    
     glm::mat4 lightProjection, lightView;
     glm::mat4 lightSpaceMatrix;
 
-    float near_plane = 0.1f, far_plane = 10.0f;
+    float near_plane = 0.1f, far_plane = 200.0f;
     lightProjection = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, near_plane, far_plane);
-    lightView = glm::lookAt(lightDir, glm::vec3(0.0f), glm::vec3(0.0, 1.0, 0.0));
+    lightView = glm::lookAt(lightPos, glm::vec3(0.0f), glm::vec3(0.0, 1.0, 0.0));
     lightSpaceMatrix = lightProjection * lightView;
 
     bindFrameBuffer();
@@ -56,6 +58,14 @@ void ShadowMap::prepareShadowRender(glm::vec3 lightDir) {
 
     glActiveTexture(GL_TEXTURE1);
     glBindTexture(GL_TEXTURE_2D, m_shadowMap);
+
+    Shader* terrainShader = ResourceManager::getShader("terrain");
+    terrainShader->Bind();
+    terrainShader->SetMatrix4("u_lightSpaceMatrix", lightSpaceMatrix);
+    terrainShader->SetInt("u_shadowMap", 1);
+
+    glActiveTexture(GL_TEXTURE1);
+    glBindTexture(GL_TEXTURE_2D, m_shadowMap);
 }
 
 void ShadowMap::bindFrameBuffer() {
@@ -64,8 +74,11 @@ void ShadowMap::bindFrameBuffer() {
     glClear(GL_DEPTH_BUFFER_BIT);
 }
 
-void ShadowMap::unbindFrameBuffer(int width, int height) {
+void ShadowMap::unbindFrameBuffer(Window* window) {
+    int w, h;
+    glfwGetFramebufferSize(window->getWindow(), &w, &h);
+
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
-    glViewport(0, 0, width, height);
+    glViewport(0, 0, w, h);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }

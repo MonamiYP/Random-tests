@@ -4,7 +4,9 @@ layout (quads, equal_spacing, ccw) in;
 
 out vec3 FragPos;
 out vec3 Normal;
+out vec4 FragPosLightSpace;
 
+uniform mat4 u_lightSpaceMatrix;
 uniform mat4 u_model;
 uniform mat4 u_view;
 uniform mat4 u_projection;
@@ -143,16 +145,15 @@ float ridgeNoise(vec3 pos, int octave) {
 	float noiseSum = 0.0;
     float amplitude = 1.0;
     float frequency = u_ridgeNoiseFrequency;
-    float ridgeWeight = 1.1;
-    float power = 2; // How sharp the ridges are
+    float ridgeWeight = 1.0;
 
-    for (int i = 0; i < octave; i ++) {
+    for (int i = 0; i < octave; i++) {
         float noiseVal = 1 - abs(snoise(pos * frequency));
-        noiseVal = pow(abs(noiseVal), power); // Sharpen ridge
+        noiseVal *= noiseVal;
         noiseVal *= ridgeWeight;
         ridgeWeight = noiseVal;
 
-        noiseSum += noiseVal * amplitude;
+        noiseSum += amplitude * noiseVal;
         amplitude *= u_ridgeNoisePersistence;
         frequency *= u_ridgeNoiseLacunarity;
     }
@@ -165,11 +166,35 @@ float addFloor(float height) {
     return height;
 }
 
-float computeHeight(vec3 pos) {
+float computeNoiseHeight(vec3 pos) {
     float height = u_fractalNoiseAmplitude * fractalNoise(pos, 5);
     height += u_ridgeNoiseAmplitude * ridgeNoise(pos, 5);
     height = addFloor(height);
+
     return height;
+}
+
+vec3 calculateNormal(vec3 spherePos) {
+    float epsilon = 1e-2;
+    vec3 n = normalize(spherePos);
+
+    vec3 referenceDir = abs(n.y) < 0.999 ? vec3(0,1,0) : vec3(1,0,0); // Make sure cross products aren't 0
+    vec3 tangent = normalize(cross(referenceDir, n));
+    vec3 bitangent = normalize(cross(n, tangent));
+
+    float height = computeNoiseHeight(spherePos);
+    float h_dx = computeNoiseHeight(spherePos + epsilon * tangent);
+    float h_dy = computeNoiseHeight(spherePos + epsilon * bitangent);
+
+    vec3 pos = spherePos * (1.0 + height);
+    vec3 pos_dx = (spherePos + epsilon * tangent) * (1.0 + h_dx);
+    vec3 pos_dy = (spherePos + epsilon * bitangent) * (1.0 + h_dy);
+
+    vec3 normal = normalize(cross(pos_dx - pos, pos_dy - pos));
+
+    Normal = normalize(mat3(u_model) * normal);
+
+    return pos;
 }
 
 void main() {
@@ -179,9 +204,10 @@ void main() {
 
     /*
         Get the positions of the 4 quad vertices (corners)
-        p00 ---- p10
-        |         |
+        v
         p01 ---- p11
+        |         |
+        p00 ---- p10 u
     */
     vec4 p00 = gl_in[0].gl_Position; 
     vec4 p10 = gl_in[1].gl_Position;
@@ -201,24 +227,11 @@ void main() {
     vec3 spherePosition = vec3(p.x * scale, p.y * scale, p.z * scale);
 
     /* Terrain Details */
-    float height = computeHeight(spherePosition);
-    spherePosition *= (1.0 + height);
+    spherePosition = calculateNormal(spherePosition);
+    
     vec4 worldPos = u_model * vec4(spherePosition, p.w);
     FragPos = worldPos.xyz;
-
-    /* Calculate normals */
-    float epsilon = 1e-3;
-    vec3 n = normalize(spherePosition);
-    vec3 referenceDir = abs(n.y) < 0.999 ? vec3(0,1,0) : vec3(1,0,0); // Make sure cross products aren't 0
-    vec3 orth1 = normalize(cross(referenceDir, n));
-    vec3 orth2 = normalize(cross(n, orth1));
-
-    float h0 = computeHeight(n);
-    float h1 = computeHeight(normalize(n + orth1 * epsilon));
-    float h2 = computeHeight(normalize(n + orth2 * epsilon));
-    vec3 normal = normalize(n - ((h1 - h0) * orth1 + (h2 - h0) * orth2) / epsilon);
-    
-    Normal = normalize(mat3(u_model) * normal);
+    FragPosLightSpace = u_lightSpaceMatrix * vec4(FragPos, 1.0);
 
     gl_Position = u_projection * u_view * worldPos;
 }

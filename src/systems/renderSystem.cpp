@@ -3,6 +3,7 @@
 extern ECS ecs;
 
 void RenderSystem::render(Shader* shader) {
+    glCullFace(GL_BACK);
     for (const auto& entity : m_Entities) {
         auto& transform = ecs.GetComponent<Transform>(entity);
         auto& modelComponent = ecs.GetComponent<ModelComponent>(entity);

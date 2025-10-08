@@ -49,7 +49,7 @@ void TerrainSystem::updateGUI() {
             ImGui::TreePop();
         }   
         if (ImGui::TreeNode("Ridge Noise")) {
-            ImGui::SliderFloat("Frequency", &terrain.ridge.frequency, 0.0f, 10.0f, "%.1f");
+            ImGui::SliderFloat("Frequency", &terrain.ridge.frequency, 0.0f, 0.1f, "%.3f");
             ImGui::SliderFloat("Lacunarity", &terrain.ridge.lacunarity, 1.0f, 4.0f, "%.3f");
             ImGui::SliderFloat("Persistence", &terrain.ridge.persistence, 0.0f, 1.0f, "%.3f");
             ImGui::SliderFloat("Amplitude", &terrain.ridge.amplitude, 0.0f, 0.05f, "%.3f");
